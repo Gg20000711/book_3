@@ -1,16 +1,18 @@
 package com.example.book_3.web;
 
-import com.example.book_3.pojo.Cart;
-import com.example.book_3.pojo.User;
+import com.example.book_3.pojo.*;
 import com.example.book_3.service.impl.OrderServiceImpl;
 import com.example.book_3.pojo.Cart;
 import com.example.book_3.pojo.User;
 import com.example.book_3.service.impl.OrderServiceImpl;
+import com.example.book_3.utils.WebUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * @author 高先锋好帅
@@ -43,4 +45,35 @@ public class OrderServlet extends BaseServlet{
         request.getSession().setAttribute("orderId",orderId);
         response.sendRedirect(request.getContextPath() + "/pages/cart/checkout.jsp");
     }
-}
+
+    protected void showAllOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Order> orders = orderService.queryForAllOrder();
+        request.getSession().setAttribute("orders",orders);
+        response.sendRedirect(request.getContextPath() + "/pages/manager/order_manager.jsp");
+    }
+
+    protected void showPageOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Integer pageNo = WebUtils.parseInt(request.getParameter("pageNo"),1);
+        Integer pageSize = WebUtils.parseInt(request.getParameter("pageSize"),4);
+//        List<Order> orders = orderService.queryForPageOrders(pageNo,pageSize);
+//        request.setAttribute("pageOrders",orders);
+        Page<Order> page = orderService.queryForPageOrders(pageNo,pageSize);
+        page.setUrl("orderServlet?action=showPageOrders");
+        request.setAttribute("page",page);
+        request.getRequestDispatcher("/pages/manager/order_manager.jsp").forward(request,response);
+
+    }
+    protected void showPageOrdersByUserId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        User user = (User) request.getSession().getAttribute("user");
+        Integer userId = user.getId();
+        Integer pageNo = WebUtils.parseInt(request.getParameter("pageNo"),1);
+        Integer pageSize = WebUtils.parseInt(request.getParameter("pageSize"),4);
+        Page<Order> page = orderService.queryForPageOrdersByUserId(userId,pageNo,pageSize);
+        page.setUrl("orderServlet?action=showPageOrdersByUserId");
+        request.setAttribute("page",page);
+
+        request.getRequestDispatcher("/pages/order/order.jsp").forward(request,response);
+
+    }
+    }

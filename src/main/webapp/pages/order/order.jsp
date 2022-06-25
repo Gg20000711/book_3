@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
@@ -29,28 +30,20 @@
 				<td>金额</td>
 				<td>状态</td>
 				<td>详情</td>
-			</tr>		
-			<tr>
-				<td>2015.04.23</td>
-				<td>90.00</td>
-				<td>未发货</td>
-				<td><a href="#">查看详情</a></td>
-			</tr>	
-			
-			<tr>
-				<td>2015.04.20</td>
-				<td>20.00</td>
-				<td>已发货</td>
-				<td><a href="#">查看详情</a></td>
-			</tr>	
-			
-			<tr>
-				<td>2014.01.23</td>
-				<td>190.00</td>
-				<td>已完成</td>
-				<td><a href="#">查看详情</a></td>
-			</tr>		
+			</tr>
+			<c:forEach items="${requestScope.page.items}" var="item">
+				<tr>
+					<td>${item.createTime}</td>
+					<td>${item.price}</td>
+					<td>${item.status==0?"未发货":(item.status==1?"已发货":"已签收")}</td>
+					<td><a href="#">查看详情</a></td>
+				</tr>
+			</c:forEach>
+
 		</table>
+		<%--静态包含分页条--%>
+		<%@include file="/pages/common/page_nav.jsp"%>
+		<%--静态包含分页条--%>
 		
 	
 	</div>

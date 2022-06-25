@@ -5,8 +5,10 @@ import com.example.book_3.dao.impl.OrderDaoImpl;
 import com.example.book_3.dao.impl.OrderItemDaoImpl;
 import com.example.book_3.pojo.*;
 import com.example.book_3.service.OrderService;
+import com.sun.org.apache.xpath.internal.operations.Or;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,5 +48,45 @@ public class OrderServiceImpl implements OrderService {
         //返回值是订单号
         return orderId;
 
+    }
+
+    @Override
+    public List<Order> queryForAllOrder() {
+        return orderDao.queryForAllOrder();
+    }
+
+    @Override
+    public Page<Order> queryForPageOrders(int pageNo, int pageSize) {
+        Page<Order> page = new Page<Order>();
+
+        page.setPageSize(pageSize);
+        page.setPageTotalCount(orderDao.queryForOrderCount());
+        if (orderDao.queryForOrderCount() % pageSize > 0){
+            page.setPageTotal(orderDao.queryForOrderCount() / pageSize + 1);
+        }else {
+            page.setPageTotal(orderDao.queryForOrderCount() / pageSize);
+        }
+        page.setPageNo(pageNo);
+        int begin = (pageNo - 1) * pageSize;
+        page.setItems(orderDao.queryForPageOrder(begin,pageSize));
+        return page;
+    }
+
+    @Override
+    public Page<Order> queryForPageOrdersByUserId(int userId, int pageNo, int pageSize) {
+        Page<Order> page = new Page<>();
+
+        page.setPageSize(pageSize);
+        Integer orderCountByUserId = orderDao.queryForOrderCountByUserId(userId);
+        page.setPageTotalCount(orderCountByUserId);
+        if (orderCountByUserId % pageSize > 0){
+            page.setPageTotal(orderCountByUserId / pageSize + 1);
+        }else {
+            page.setPageTotal(orderCountByUserId / pageSize);
+        }
+        page.setPageNo(pageNo);
+        int begin = (pageNo - 1) * pageSize;
+        page.setItems(orderDao.queryForPageOrderByUserId(userId,begin,pageSize));
+        return page;
     }
 }

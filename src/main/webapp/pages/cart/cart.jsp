@@ -12,6 +12,7 @@
 	<div id="header">
 			<img class="logo_img" alt="" src="static/img/logo.gif" >
 			<span class="wel_word">购物车</span>
+		<%--静态包含--%>
 		<%@include file="/pages/common/login_sucess_menu.jsp"%>
 
 		<script type="text/javascript">
